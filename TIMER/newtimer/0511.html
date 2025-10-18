@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full Screen Malaysia Timer</title>
+  <style>
+    /* ✅ EASY SIZE CONTROL */
+    :root {
+      /* Change these values anytime */
+      --top-logo-width: 45vw;      /* relative to screen width */
+      --bottom-logo-width: 50vw;
+      --date-font-size: 1.5rem;
+      --clock-font-size: 3rem;
+      --countdown-font-size: 10rem;
+      --panel-font-size: 0.5rem;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background-color: #f0f4f8;
+      font-family: "Poppins", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* ✅ LOGOS */
+    .logo-top {
+      width: var(--top-logo-width);
+      height: auto;
+      max-width: 100%;
+      margin-top: 10px;
+      transition: width 0.3s ease;
+    }
+
+    .logo-bottom {
+      width: var(--bottom-logo-width);
+      height: auto;
+      max-width: 100%;
+      margin-bottom: 10px;
+      transition: width 0.3s ease;
+    }
+
+    /* ✅ MAIN AREA */
+    .main-content {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #date {
+      font-size: var(--date-font-size);
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    #clock {
+      font-size: var(--clock-font-size);
+      font-weight: 700;
+      color: #007bff;
+      margin-bottom: 40px;
+    }
+
+    /* ✅ COUNTDOWN BOX */
+    .countdown {
+      background: #ffffff;
+      border-radius: 25px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      padding: 40px 60px;
+      max-width: 1000px;
+      width: 85%;
+    }
+
+    .countdown h2 {
+      margin: 0 0 15px;
+      font-size: 2rem;
+      color: #333;
+    }
+
+    .countdown-display {
+      font-size: var(--countdown-font-size);
+      font-weight: 800;
+      color: #ff4500;
+      margin: 25px 0 30px;
+      line-height: 1;
+    }
+
+    /* ✅ SMALL CONTROL PANEL */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: var(--panel-font-size);
+    }
+
+    .controls label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .controls input {
+      width: 65px;
+      padding: 6px;
+      font-size: 1rem;
+      text-align: center;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 5px;
+    }
+
+    button {
+      padding: 10px 25px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    /* ✅ RESPONSIVE DESIGN */
+    @media (max-width: 768px) {
+      :root {
+        --top-logo-width: 100vw;
+        --bottom-logo-width: 110vw;
+        --countdown-font-size: 5rem;
+        --clock-font-size: 0.1rem;
+        --date-font-size: 0.1rem;
+      }
+      .countdown {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ✅ Top Logo -->
+  <img src="top logo.png" alt="Top Logo" class="logo-top">
+
+  <!-- ✅ Main Content -->
+  <div class="main-content">
+    <div id="date"></div>
+    <div id="clock"></div>
+
+    <div class="countdown">
+      <h2>Countdown Timer</h2>
+      <div class="countdown-display" id="countdown-display">00:00:00</div>
+
+      <div class="controls">
+        <label>Hours <input type="number" id="hours" min="0" value="0"></label>
+        <label>Minutes <input type="number" id="minutes" min="0" value="0"></label>
+        <label>Seconds <input type="number" id="seconds" min="0" value="0"></label>
+        <button onclick="startCountdown()">Start</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Bottom Logo -->
+  <img src="bottom.png" alt="Bottom Logo" class="logo-bottom">
+
+  <script>
+    // Date and Clock
+    const dateElement = document.getElementById("date");
+    const clockElement = document.getElementById("clock");
+    const countdownDisplay = document.getElementById("countdown-display");
+    let countdownInterval;
+
+    function updateDate() {
+      const today = new Date();
+      const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+      dateElement.textContent = today.toLocaleDateString("en-MY", options);
+    }
+
+    function updateClock() {
+      const now = new Date().toLocaleTimeString("en-MY", { timeZone: "Asia/Kuala_Lumpur" });
+      clockElement.textContent = now;
+    }
+
+    function startCountdown() {
+      clearInterval(countdownInterval);
+      let hours = parseInt(document.getElementById("hours").value) || 0;
+      let minutes = parseInt(document.getElementById("minutes").value) || 0;
+      let seconds = parseInt(document.getElementById("seconds").value) || 0;
+      let totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+      countdownInterval = setInterval(() => {
+        if (totalSeconds <= 0) {
+          clearInterval(countdownInterval);
+          countdownDisplay.textContent = "Time’s Up!";
+          return;
+        }
+        totalSeconds--;
+        let h = Math.floor(totalSeconds / 3600);
+        let m = Math.floor((totalSeconds % 3600) / 60);
+        let s = totalSeconds % 60;
+        countdownDisplay.textContent =
+          `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+      }, 1000);
+    }
+
+    updateDate();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
